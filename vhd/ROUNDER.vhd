@@ -1,44 +1,44 @@
 library IEEE;
-USE ieee.std_logic_1164.all;
-USE ieee.numeric_std.all;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
-ENTITY ROUNDER IS
-PORT(	DATA_IN	: IN SIGNED(30 downto 0):=(others=>'0');
-	DATA_OUT	: OUT SIGNED(15 downto 0):=(others=>'0')
-);
-END ENTITY;
+entity ROUNDER is
+  port(DATA_IN  : in  signed(30 downto 0) := (others => '0');
+       DATA_OUT : out signed(15 downto 0) := (others => '0')
+       );
+end entity;
 
-ARCHITECTURE behavioural OF ROUNDER IS
+architecture behavioural of ROUNDER is
 
-SIGNAL DATA_BUFFER : SIGNED(15 downto 0);
-SIGNAL ROUND_CHECK : STD_LOGIC;
+  signal DATA_BUFFER : signed(15 downto 0);
+  signal ROUND_CHECK : std_logic;
 
-BEGIN
+begin
 
--- Questo processo, sfruttato solo qualora il 15esimo bit sia pari ad uno, 
+-- Questo processo, sfruttato solo qualora il 15esimo bit sia pari ad uno,
 -- controlla se abbiamo superato la meta' del massimo rappresentabile con i 15 bit da troncare.
 -- In parole povere, basta che venga trovato un '1' nei 14 bit rimanenti per asserire questa condizione.
-is_more_than_half: PROCESS (DATA_IN(13 downto 0))
-BEGIN
-ROUND_CHECK<='0';
-FOR i IN 0 to 13 LOOP
-	IF (DATA_IN(i) = '1') THEN
-        ROUND_CHECK<='1';
-    END IF;
-END LOOP;
-END PROCESS;
+  is_more_than_half : process (DATA_IN(13 downto 0))
+  begin
+    ROUND_CHECK <= '0';
+    for i in 0 to 13 loop
+      if (DATA_IN(i) = '1') then
+        ROUND_CHECK <= '1';
+      end if;
+    end loop;
+  end process;
 
-round2nearesteven: PROCESS(DATA_IN, ROUND_CHECK)
-BEGIN
-IF(DATA_IN(30 downto 15)/="0111111111111111") THEN
-	IF((DATA_IN(15)='0' AND DATA_IN(14)='1' AND ROUND_CHECK='1') OR (DATA_IN(15)='1' AND DATA_IN(14)='1')) THEN
-		DATA_BUFFER <= DATA_IN(30 downto 15) + 1;
-	ELSE
-		DATA_BUFFER <= DATA_IN(30 downto 15);
-	END IF;
-END IF;
-END PROCESS;
+  round2nearesteven : process(DATA_IN, ROUND_CHECK)
+  begin
+    if(DATA_IN(30 downto 15) /= "0111111111111111") then
+      if((DATA_IN(15) = '0' and DATA_IN(14) = '1' and ROUND_CHECK = '1') or (DATA_IN(15) = '1' and DATA_IN(14) = '1')) then
+        DATA_BUFFER <= DATA_IN(30 downto 15) + 1;
+      else
+        DATA_BUFFER <= DATA_IN(30 downto 15);
+      end if;
+    end if;
+  end process;
 
-DATA_OUT <= DATA_BUFFER;
+  DATA_OUT <= DATA_BUFFER;
 
-END behavioural;
+end behavioural;

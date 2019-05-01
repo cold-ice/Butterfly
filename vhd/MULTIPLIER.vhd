@@ -1,22 +1,22 @@
 library IEEE;
-USE ieee.std_logic_1164.all;
-USE ieee.numeric_std.all;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
-ENTITY MULTIPLIER IS
-PORT(	DATA_IN0	: IN SIGNED(15 downto 0):=(others=>'0');
-		DATA_IN1	: IN SIGNED(15 downto 0):=(others=>'0');
-		DATA_OUT	: OUT SIGNED(31 downto 0):=(others=>'0')
-);
-END ENTITY;
+entity MULTIPLIER is
+  port(DATA_IN0 : in  signed(15 downto 0) := (others => '0');
+       DATA_IN1 : in  signed(15 downto 0) := (others => '0');
+       DATA_OUT : out signed(31 downto 0) := (others => '0')
+       );
+end entity;
 
-ARCHITECTURE behavioural OF MULTIPLIER IS
+architecture behavioural of MULTIPLIER is
 
-SIGNAL MULT : SIGNED(31 downto 0):=(others=>'0');
+  signal MULT : signed(31 downto 0) := (others => '0');
 
-BEGIN
+begin
 
-MULT <= TO_SIGNED(to_integer(DATA_IN0)*to_integer(DATA_IN1),32);
+  MULT <= TO_SIGNED(to_integer(DATA_IN0)*to_integer(DATA_IN1), 32);
 
-DATA_OUT <= MULT;
+  DATA_OUT <= MULT;
 
-END behavioural;
+end behavioural;

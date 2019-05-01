@@ -1,91 +1,91 @@
 library IEEE;
-USE ieee.std_logic_1164.all;
-USE ieee.numeric_std.all;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
-ENTITY LATE_STATUS_CU IS
-PORT(		CLOCK		 	: IN STD_LOGIC;
-			RESET			: IN STD_LOGIC;
-			START			: IN STD_LOGIC;
-			INSTRUCTION	: OUT STD_LOGIC_VECTOR(21 downto 0)
-);
-END ENTITY;
+entity LATE_STATUS_CU is
+  port(CLOCK       : in  std_logic;
+       RESET       : in  std_logic;
+       START       : in  std_logic;
+       INSTRUCTION : out std_logic_vector(21 downto 0)
+       );
+end entity;
 
-ARCHITECTURE behavioural OF LATE_STATUS_CU IS
+architecture behavioural of LATE_STATUS_CU is
 
-COMPONENT REG2
-GENERIC	(SIZE			: INTEGER);
-PORT(		CLOCK 		: IN STD_LOGIC;
-			ENABLE		: IN STD_LOGIC;
-			CLEAR			: IN STD_LOGIC;
-			INPUT			: IN STD_LOGIC_VECTOR(SIZE downto 0);
-			OUTPUT		: OUT STD_LOGIC_VECTOR(SIZE downto 0)
-);
-END COMPONENT;
+  component REG2
+    generic (SIZE : integer);
+    port(CLOCK  : in  std_logic;
+         ENABLE : in  std_logic;
+         CLEAR  : in  std_logic;
+         INPUT  : in  std_logic_vector(SIZE downto 0);
+         OUTPUT : out std_logic_vector(SIZE downto 0)
+         );
+  end component;
 
-COMPONENT REG2_INV
-GENERIC	(SIZE			: INTEGER);
-PORT(		CLOCK 		: IN STD_LOGIC;
-			ENABLE		: IN STD_LOGIC;
-			CLEAR			: IN STD_LOGIC;
-			INPUT			: IN STD_LOGIC_VECTOR(SIZE downto 0);
-			OUTPUT		: OUT STD_LOGIC_VECTOR(SIZE downto 0)
-);
-END COMPONENT;
+  component REG2_INV
+    generic (SIZE : integer);
+    port(CLOCK  : in  std_logic;
+         ENABLE : in  std_logic;
+         CLEAR  : in  std_logic;
+         INPUT  : in  std_logic_vector(SIZE downto 0);
+         OUTPUT : out std_logic_vector(SIZE downto 0)
+         );
+  end component;
 
-COMPONENT uROM_EVEN
-PORT(		INPUT			: IN STD_LOGIC_VECTOR(2 downto 0);
-			OUTPUT		: OUT STD_LOGIC_VECTOR(26 downto 0)
-);
-END COMPONENT;
+  component uROM_EVEN
+    port(INPUT  : in  std_logic_vector(2 downto 0);
+         OUTPUT : out std_logic_vector(26 downto 0)
+         );
+  end component;
 
-COMPONENT uROM_ODD
-PORT(		INPUT			: IN STD_LOGIC_VECTOR(2 downto 0);
-			OUTPUT		: OUT STD_LOGIC_VECTOR(26 downto 0)
-);
-END COMPONENT;
+  component uROM_ODD
+    port(INPUT  : in  std_logic_vector(2 downto 0);
+         OUTPUT : out std_logic_vector(26 downto 0)
+         );
+  end component;
 
-COMPONENT late_status_PLA
-PORT(		CC				: IN STD_LOGIC;
-			LSB_IN		: IN STD_LOGIC;
-			STATUS		: IN STD_LOGIC;
-			JUMP_VALID	: OUT STD_LOGIC;
-			LSB_OUT		: OUT STD_LOGIC
-);
-END COMPONENT;
+  component late_status_PLA
+    port(CC         : in  std_logic;
+         LSB_IN     : in  std_logic;
+         STATUS     : in  std_logic;
+         JUMP_VALID : out std_logic;
+         LSB_OUT    : out std_logic
+         );
+  end component;
 
-SIGNAL INSTRUCTION_EVEN 										: STD_LOGIC_VECTOR(26 downto 0):="100000000000000000000000000";
-SIGNAL INSTRUCTION_ODD 											: STD_LOGIC_VECTOR(26 downto 0):="000100100100000000000000000";
-SIGNAL NEW_INSTRUCTION, INSTRUCTION_BUFFER 				: STD_LOGIC_VECTOR(26 downto 0):=(others=>'0');
-SIGNAL INSTRUCTION_ADDRESS 									: STD_LOGIC_VECTOR(3 downto 0):=(others=>'0');
-SIGNAL LSB_uADDRESS, JUMP_VALIDATION, INSTRUCTION_SEL : STD_LOGIC:='0';
-SIGNAL INSTRUCTION_ADDRESS_BUFFER 							: STD_LOGIC_VECTOR(3 downto 0):=(others=>'0');
+  signal INSTRUCTION_EVEN                               : std_logic_vector(26 downto 0) := "100000000000000000000000000";
+  signal INSTRUCTION_ODD                                : std_logic_vector(26 downto 0) := "000100100100000000000000000";
+  signal NEW_INSTRUCTION, INSTRUCTION_BUFFER            : std_logic_vector(26 downto 0) := (others => '0');
+  signal INSTRUCTION_ADDRESS                            : std_logic_vector(3 downto 0)  := (others => '0');
+  signal LSB_uADDRESS, JUMP_VALIDATION, INSTRUCTION_SEL : std_logic                     := '0';
+  signal INSTRUCTION_ADDRESS_BUFFER                     : std_logic_vector(3 downto 0)  := (others => '0');
 
-BEGIN
+begin
 
-INSTRUCTION_ADDRESS_BUFFER <= NEW_INSTRUCTION(25 downto 23) & LSB_uADDRESS;
+  INSTRUCTION_ADDRESS_BUFFER <= NEW_INSTRUCTION(25 downto 23) & LSB_uADDRESS;
 
-INSTRUCTION <= NEW_INSTRUCTION(21 downto 0);
+  INSTRUCTION <= NEW_INSTRUCTION(21 downto 0);
 
 --Bypass MUX
-WITH JUMP_VALIDATION SELECT INSTRUCTION_SEL <=		INSTRUCTION_ADDRESS(0) 	WHEN '0',
-																	LSB_uADDRESS				WHEN '1',
-																	INSTRUCTION_ADDRESS(0) 	WHEN others;
+  with JUMP_VALIDATION select INSTRUCTION_SEL <= INSTRUCTION_ADDRESS(0) when '0',
+                                                 LSB_uADDRESS           when '1',
+                                                 INSTRUCTION_ADDRESS(0) when others;
 
 -- Jump MUX
-WITH INSTRUCTION_SEL SELECT INSTRUCTION_BUFFER <=	INSTRUCTION_EVEN when '0',
-																	INSTRUCTION_ODD when '1',
-																	INSTRUCTION_EVEN when others;
+  with INSTRUCTION_SEL select INSTRUCTION_BUFFER <= INSTRUCTION_EVEN when '0',
+                                                    INSTRUCTION_ODD  when '1',
+                                                    INSTRUCTION_EVEN when others;
 
-uROMeven: uROM_even 		PORT MAP(INSTRUCTION_ADDRESS(3 downto 1), INSTRUCTION_EVEN);
+  uROMeven : uROM_even port map(INSTRUCTION_ADDRESS(3 downto 1), INSTRUCTION_EVEN);
 
-uROModd: uROM_odd 		PORT MAP(INSTRUCTION_ADDRESS(3 downto 1), INSTRUCTION_ODD);
-							
-uInstReg: REG2 			GENERIC MAP(SIZE => 26)
-								PORT MAP(CLOCK, '1', RESET, INSTRUCTION_BUFFER, NEW_INSTRUCTION);
+  uROModd : uROM_odd port map(INSTRUCTION_ADDRESS(3 downto 1), INSTRUCTION_ODD);
 
-uAddReg: REG2_INV 		GENERIC MAP(SIZE => 3)
-								PORT MAP(CLOCK, '1', RESET, INSTRUCTION_ADDRESS_BUFFER, INSTRUCTION_ADDRESS);
+  uInstReg : REG2 generic map(SIZE => 26)
+    port map(CLOCK, '1', RESET, INSTRUCTION_BUFFER, NEW_INSTRUCTION);
 
-ls_PLA: late_status_PLA PORT MAP(NEW_INSTRUCTION(26), NEW_INSTRUCTION(22), START, JUMP_VALIDATION, LSB_uADDRESS);
+  uAddReg : REG2_INV generic map(SIZE => 3)
+    port map(CLOCK, '1', RESET, INSTRUCTION_ADDRESS_BUFFER, INSTRUCTION_ADDRESS);
 
-END behavioural;
+  ls_PLA : late_status_PLA port map(NEW_INSTRUCTION(26), NEW_INSTRUCTION(22), START, JUMP_VALIDATION, LSB_uADDRESS);
+
+end behavioural;

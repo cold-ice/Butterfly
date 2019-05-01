@@ -1,43 +1,43 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.all;
-USE ieee.numeric_std.all;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
-ENTITY ROUNDER_tb IS
+entity ROUNDER_tb is
 
 --PORT();
 
-END ROUNDER_tb;
+end ROUNDER_tb;
 
 
-ARCHITECTURE behavioural OF ROUNDER_tb IS
+architecture behavioural of ROUNDER_tb is
 
-COMPONENT ROUNDER
-PORT(	DATA_IN	: IN SIGNED(30 downto 0):=(others=>'0');
-		DATA_OUT	: OUT SIGNED(15 downto 0):=(others=>'0')
-);
-END COMPONENT;
+  component ROUNDER
+    port(DATA_IN  : in  signed(30 downto 0) := (others => '0');
+         DATA_OUT : out signed(15 downto 0) := (others => '0')
+         );
+  end component;
 
-SIGNAL DATA_IN : SIGNED(30 downto 0);
+  signal DATA_IN : signed(30 downto 0);
 
-BEGIN
+begin
 
-ROUND: ROUNDER	PORT MAP(DATA_IN);
+  ROUND : ROUNDER port map(DATA_IN);
 
-signals: PROCESS
-BEGIN
-DATA_IN<="0000000000000000"&"100000000000000"; --NO
-wait for 40 ns;
-DATA_IN<="0000000000000000"&"100000000000001"; --YES
-wait for 40 ns;
-DATA_IN<="0000000000000001"&"100000000000000"; --YES
-wait for 40 ns;
-DATA_IN<="1000000000000010"&"100000000000000"; --NO
-wait for 40 ns;
-DATA_IN<="1000000000000010"&"100000000000001"; --YES
-wait for 40 ns;
-DATA_IN<="1000000000000011"&"100000000000000"; --YES
-wait for 40 ns;
-wait;
-END PROCESS;
+  signals : process
+  begin
+    DATA_IN <= "0000000000000000"&"100000000000000";  --NO
+    wait for 40 ns;
+    DATA_IN <= "0000000000000000"&"100000000000001";  --YES
+    wait for 40 ns;
+    DATA_IN <= "0000000000000001"&"100000000000000";  --YES
+    wait for 40 ns;
+    DATA_IN <= "1000000000000010"&"100000000000000";  --NO
+    wait for 40 ns;
+    DATA_IN <= "1000000000000010"&"100000000000001";  --YES
+    wait for 40 ns;
+    DATA_IN <= "1000000000000011"&"100000000000000";  --YES
+    wait for 40 ns;
+    wait;
+  end process;
 
-END behavioural;
+end behavioural;

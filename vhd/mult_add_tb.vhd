@@ -1,72 +1,72 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.all;
-USE ieee.numeric_std.all;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
-ENTITY mult_add_tb IS
+entity mult_add_tb is
 
 --PORT();
 
-END mult_add_tb;
+end mult_add_tb;
 
 
-ARCHITECTURE behavioural OF mult_add_tb IS
+architecture behavioural of mult_add_tb is
 
-COMPONENT ADDER
-PORT(	DATA_IN0	: IN SIGNED(30 downto 0):=(others=>'0');
-	DATA_IN1	: IN SIGNED(30 downto 0):=(others=>'0');
-	C0		: IN STD_LOGIC:='0';
-	DATA_OUT	: OUT SIGNED(30 downto 0):=(others=>'0')
-);
-END COMPONENT;
+  component ADDER
+    port(DATA_IN0 : in  signed(30 downto 0) := (others => '0');
+         DATA_IN1 : in  signed(30 downto 0) := (others => '0');
+         C0       : in  std_logic           := '0';
+         DATA_OUT : out signed(30 downto 0) := (others => '0')
+         );
+  end component;
 
-COMPONENT MULTIPLIER
-PORT(	DATA_IN0	: IN SIGNED(15 downto 0):=(others=>'0');
-	DATA_IN1	: IN SIGNED(15 downto 0):=(others=>'0');
-	DATA_OUT	: OUT SIGNED(31 downto 0):=(others=>'0')
-);
-END COMPONENT;
+  component MULTIPLIER
+    port(DATA_IN0 : in  signed(15 downto 0) := (others => '0');
+         DATA_IN1 : in  signed(15 downto 0) := (others => '0');
+         DATA_OUT : out signed(31 downto 0) := (others => '0')
+         );
+  end component;
 
-COMPONENT SHIFTER_X2
-PORT(	DATA_IN		: IN SIGNED(15 downto 0):=(others=>'0');
-	DATA_OUT	: OUT SIGNED(15 downto 0):=(others=>'0')
-);
-END COMPONENT;
+  component SHIFTER_X2
+    port(DATA_IN  : in  signed(15 downto 0) := (others => '0');
+         DATA_OUT : out signed(15 downto 0) := (others => '0')
+         );
+  end component;
 
-SIGNAL DATA_IN0, DATA_IN1 : SIGNED(30 downto 0);
-SIGNAL C0 : STD_LOGIC;
+  signal DATA_IN0, DATA_IN1 : signed(30 downto 0);
+  signal C0                 : std_logic;
 
-BEGIN
+begin
 
-add: ADDER		PORT MAP(DATA_IN0, DATA_IN1, C0);
-mult: MULTIPLIER	PORT MAP(DATA_IN0(30 downto 15), DATA_IN1(30 downto 15));
-shf: SHIFTER_X2		PORT MAP(DATA_IN0(30 downto 15));
+  add  : ADDER port map(DATA_IN0, DATA_IN1, C0);
+  mult : MULTIPLIER port map(DATA_IN0(30 downto 15), DATA_IN1(30 downto 15));
+  shf  : SHIFTER_X2 port map(DATA_IN0(30 downto 15));
 
-signals: PROCESS
-BEGIN
-DATA_IN0<="0000000000000001000000000000000";
-DATA_IN1<="0000000000000001100000000000000";
-C0<='0';
-wait for 40 ns;
-DATA_IN0<="1111111111111110111111111111111"; -- -32769
-DATA_IN1<="1111111111111110000000000000000"; -- -65536
-C0<='0';
-wait for 40 ns;
-DATA_IN0<="0000000000000001000000000000000";
-DATA_IN1<="1111111111111111000000000000000";
-C0<='0';
-wait for 40 ns;
-DATA_IN0<="0000000000000001000000000000000";
-DATA_IN1<="0000000000000001100000000000000";
-C0<='1';
-wait for 40 ns;
-DATA_IN0<="1111111111111110111111111111111";
-DATA_IN1<="1111111111111110000000000000000";
-C0<='1';
-wait for 40 ns;
-DATA_IN0<="0000000000000001000000000000000";
-DATA_IN1<="1111111111111111000000000000000";
-C0<='1';
-wait for 40 ns;
-END PROCESS;
+  signals : process
+  begin
+    DATA_IN0 <= "0000000000000001000000000000000";
+    DATA_IN1 <= "0000000000000001100000000000000";
+    C0       <= '0';
+    wait for 40 ns;
+    DATA_IN0 <= "1111111111111110111111111111111";  -- -32769
+    DATA_IN1 <= "1111111111111110000000000000000";  -- -65536
+    C0       <= '0';
+    wait for 40 ns;
+    DATA_IN0 <= "0000000000000001000000000000000";
+    DATA_IN1 <= "1111111111111111000000000000000";
+    C0       <= '0';
+    wait for 40 ns;
+    DATA_IN0 <= "0000000000000001000000000000000";
+    DATA_IN1 <= "0000000000000001100000000000000";
+    C0       <= '1';
+    wait for 40 ns;
+    DATA_IN0 <= "1111111111111110111111111111111";
+    DATA_IN1 <= "1111111111111110000000000000000";
+    C0       <= '1';
+    wait for 40 ns;
+    DATA_IN0 <= "0000000000000001000000000000000";
+    DATA_IN1 <= "1111111111111111000000000000000";
+    C0       <= '1';
+    wait for 40 ns;
+  end process;
 
-END behavioural;
+end behavioural;

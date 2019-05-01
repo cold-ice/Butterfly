@@ -1,42 +1,42 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.all;
-USE ieee.numeric_std.all;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
-ENTITY Butterfly_tb IS
+entity Butterfly_tb is
 
 --PORT();
 
-END Butterfly_tb;
+end Butterfly_tb;
 
 
-ARCHITECTURE behavioural OF Butterfly_tb IS
+architecture behavioural of Butterfly_tb is
 
-COMPONENT BUTTERFLY_TOP
-PORT(		CLOCK		: IN STD_LOGIC;
-		RESET		: IN STD_LOGIC;
-		START 		: IN STD_LOGIC;
-		DATA_IN0 	: IN SIGNED(15 downto 0);
-		DATA_IN1 	: IN SIGNED(15 downto 0);
-		DONE 		: OUT STD_LOGIC;
-		DATA_OUT0 	: OUT SIGNED(15 downto 0);
-		DATA_OUT1 	: OUT SIGNED(15 downto 0)			
-);
-END COMPONENT;
+  component BUTTERFLY_TOP
+    port(CLOCK     : in  std_logic;
+         RESET     : in  std_logic;
+         START     : in  std_logic;
+         DATA_IN0  : in  signed(15 downto 0);
+         DATA_IN1  : in  signed(15 downto 0);
+         DONE      : out std_logic;
+         DATA_OUT0 : out signed(15 downto 0);
+         DATA_OUT1 : out signed(15 downto 0)
+         );
+  end component;
 
-SIGNAL CLOCK, RESET, START	: STD_LOGIC;
-SIGNAL DATA_IN0, DATA_IN1	: SIGNED(15 downto 0);
+  signal CLOCK, RESET, START : std_logic;
+  signal DATA_IN0, DATA_IN1  : signed(15 downto 0);
 
-BEGIN
+begin
 
-Butterfly: BUTTERFLY_TOP	PORT MAP(CLOCK, RESET, START, DATA_IN0, DATA_IN1);
+  Butterfly : BUTTERFLY_TOP port map(CLOCK, RESET, START, DATA_IN0, DATA_IN1);
 
-CLK_50MHz: PROCESS
-BEGIN
-CLOCK<='0';
-wait for 10 ns;
-CLOCK<='1';
-wait for 10 ns;
-END PROCESS;
+  CLK_50MHz : process
+  begin
+    CLOCK <= '0';
+    wait for 10 ns;
+    CLOCK <= '1';
+    wait for 10 ns;
+  end process;
 
 -- Test modalita' singola
 --signals: PROCESS
@@ -55,7 +55,7 @@ END PROCESS;
 --START<='0';
 --wait for 20 ns;
 --DATA_IN0<="0001000000000111"; --Bi, 4103/32768
---DATA_IN1<="1111111100000000"; --Wi, -1/128 
+--DATA_IN1<="1111111100000000"; --Wi, -1/128
 --START<='0';
 --wait for 20 ns;
 --DATA_IN0<="1110110000010000"; --Ai, -0.155762
@@ -64,61 +64,61 @@ END PROCESS;
 --END PROCESS;
 
 -- Test modalita' continua
-signals: PROCESS
-BEGIN
-DATA_IN0<=(others=>'0');
-DATA_IN1<=(others=>'0');
-START<='0';
-RESET<='1';
-wait for 20 ns;
-RESET<='0';
-wait for 40 ns;
+  signals : process
+  begin
+    DATA_IN0 <= (others => '0');
+    DATA_IN1 <= (others => '0');
+    START    <= '0';
+    RESET    <= '1';
+    wait for 20 ns;
+    RESET    <= '0';
+    wait for 40 ns;
 --1
-START<='1';
-wait for 20 ns;
-DATA_IN0<="0001010011111001"; --Br,
-DATA_IN1<="1001101100110111"; --Wr,
-START<='0';
-wait for 20 ns;
-DATA_IN0<="1110010001010111"; --Bi, 
-DATA_IN1<="0110110101001010"; --Wi,
-START<='0';
-wait for 20 ns;
-DATA_IN0<="1110110100000010"; --Ai, 
-DATA_IN1<="0001111010011011"; --Ar, 
-wait for 50 ns;
+    START    <= '1';
+    wait for 20 ns;
+    DATA_IN0 <= "0001010011111001";     --Br,
+    DATA_IN1 <= "1001101100110111";     --Wr,
+    START    <= '0';
+    wait for 20 ns;
+    DATA_IN0 <= "1110010001010111";     --Bi,
+    DATA_IN1 <= "0110110101001010";     --Wi,
+    START    <= '0';
+    wait for 20 ns;
+    DATA_IN0 <= "1110110100000010";     --Ai,
+    DATA_IN1 <= "0001111010011011";     --Ar,
+    wait for 50 ns;
 --2
-START<='1';
-wait for 20 ns;
-START<='0';
-wait for 5 ns;
-DATA_IN0<="0001111111111111"; --Br, 
-DATA_IN1<="0111111111111111"; --Wr, 
-START<='0';
-wait for 20 ns;
-DATA_IN0<="0001111111111111"; --Bi, 
-DATA_IN1<="0111111111111111"; --Wi,  
-START<='0';
-wait for 20 ns;
-DATA_IN0<="0001111111111111"; --Ai, 
-DATA_IN1<="0001111111111111"; --Ar,
-wait for 55 ns;
+    START    <= '1';
+    wait for 20 ns;
+    START    <= '0';
+    wait for 5 ns;
+    DATA_IN0 <= "0001111111111111";     --Br,
+    DATA_IN1 <= "0111111111111111";     --Wr,
+    START    <= '0';
+    wait for 20 ns;
+    DATA_IN0 <= "0001111111111111";     --Bi,
+    DATA_IN1 <= "0111111111111111";     --Wi,
+    START    <= '0';
+    wait for 20 ns;
+    DATA_IN0 <= "0001111111111111";     --Ai,
+    DATA_IN1 <= "0001111111111111";     --Ar,
+    wait for 55 ns;
 --3
-START<='1';
-wait for 20 ns;
-START<='0';
-wait for 5 ns;
-START<='0';
-DATA_IN0<="1110000000000001"; --Br, 
-DATA_IN1<="1000000000000000"; --Wr, 
-wait for 20 ns;
-DATA_IN0<="1110000000000001"; --Bi, 
-DATA_IN1<="1000000000000000"; --Wi,  
-START<='0';
-wait for 20 ns;
-DATA_IN0<="1110000000000001"; --Ai, 
-DATA_IN1<="1110000000000001"; --Ar, 
-wait;
-END PROCESS;
+    START    <= '1';
+    wait for 20 ns;
+    START    <= '0';
+    wait for 5 ns;
+    START    <= '0';
+    DATA_IN0 <= "1110000000000001";     --Br,
+    DATA_IN1 <= "1000000000000000";     --Wr,
+    wait for 20 ns;
+    DATA_IN0 <= "1110000000000001";     --Bi,
+    DATA_IN1 <= "1000000000000000";     --Wi,
+    START    <= '0';
+    wait for 20 ns;
+    DATA_IN0 <= "1110000000000001";     --Ai,
+    DATA_IN1 <= "1110000000000001";     --Ar,
+    wait;
+  end process;
 
-END behavioural;
+end behavioural;

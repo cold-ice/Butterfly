@@ -1,30 +1,30 @@
 library IEEE;
-USE ieee.std_logic_1164.all;
-USE ieee.numeric_std.all;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
-ENTITY REG IS
-GENERIC (SIZE			: INTEGER);
-PORT(		CLOCK		 	: IN STD_LOGIC;
-			ENABLE		: IN STD_LOGIC;
-			CLEAR			: IN STD_LOGIC;
-			INPUT			: IN SIGNED(SIZE downto 0);
-			OUTPUT		: OUT SIGNED(SIZE downto 0)
-);
-END ENTITY;
+entity REG is
+  generic (SIZE : integer);
+  port(CLOCK  : in  std_logic;
+       ENABLE : in  std_logic;
+       CLEAR  : in  std_logic;
+       INPUT  : in  signed(SIZE downto 0);
+       OUTPUT : out signed(SIZE downto 0)
+       );
+end entity;
 
-ARCHITECTURE behavioural OF REG IS
+architecture behavioural of REG is
 
-BEGIN
+begin
 
-FF: PROCESS(CLOCK, CLEAR)
-BEGIN
-IF(CLEAR = '1') THEN
-	OUTPUT<= (others =>'0');
-ELSIF(RISING_EDGE(CLOCK)) THEN
-	IF(ENABLE = '1') THEN
-		OUTPUT <= INPUT;
-	END IF;
-END IF;
-END PROCESS;
+  FF : process(CLOCK, CLEAR)
+  begin
+    if(CLEAR = '1') then
+      OUTPUT <= (others => '0');
+    elsif(RISING_EDGE(CLOCK)) then
+      if(ENABLE = '1') then
+        OUTPUT <= INPUT;
+      end if;
+    end if;
+  end process;
 
-END behavioural;
+end behavioural;

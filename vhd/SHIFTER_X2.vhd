@@ -1,17 +1,17 @@
 library IEEE;
-USE ieee.std_logic_1164.all;
-USE ieee.numeric_std.all;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
-ENTITY SHIFTER_X2 IS
-PORT(	DATA_IN		: IN SIGNED(15 downto 0):=(others=>'0');
-	DATA_OUT	: OUT SIGNED(15 downto 0):=(others=>'0')
-);
-END ENTITY;
+entity SHIFTER_X2 is
+  port(DATA_IN  : in  signed(15 downto 0) := (others => '0');
+       DATA_OUT : out signed(15 downto 0) := (others => '0')
+       );
+end entity;
 
-ARCHITECTURE behavioural OF SHIFTER_X2 IS
+architecture behavioural of SHIFTER_X2 is
 
-BEGIN
+begin
 
-DATA_OUT <= DATA_IN(15) & DATA_IN(13 downto 0) & '0';
+  DATA_OUT <= DATA_IN(15) & DATA_IN(13 downto 0) & '0';
 
-END behavioural;
+end behavioural;

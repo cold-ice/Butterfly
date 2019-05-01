@@ -1,70 +1,70 @@
 library IEEE;
-USE ieee.std_logic_1164.all;
-USE ieee.numeric_std.all;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
-ENTITY BUTTERFLY_TOP IS
-PORT(		CLOCK		 	: IN STD_LOGIC;
-			RESET			: IN STD_LOGIC;
-			START 		: IN STD_LOGIC;
-			DATA_IN0 	: IN SIGNED(15 downto 0);
-			DATA_IN1 	: IN SIGNED(15 downto 0);
-			DONE 			: OUT STD_LOGIC;
-			DATA_OUT0 	: OUT SIGNED(15 downto 0);
-			DATA_OUT1 	: OUT SIGNED(15 downto 0)			
-);
-END ENTITY;
+entity BUTTERFLY_TOP is
+  port(CLOCK     : in  std_logic;
+       RESET     : in  std_logic;
+       START     : in  std_logic;
+       DATA_IN0  : in  signed(15 downto 0);
+       DATA_IN1  : in  signed(15 downto 0);
+       DONE      : out std_logic;
+       DATA_OUT0 : out signed(15 downto 0);
+       DATA_OUT1 : out signed(15 downto 0)
+       );
+end entity;
 
-ARCHITECTURE behavioural OF BUTTERFLY_TOP IS
+architecture behavioural of BUTTERFLY_TOP is
 
-COMPONENT LATE_STATUS_CU
-PORT(		CLOCK			: IN STD_LOGIC;
-			RESET			: IN STD_LOGIC;
-			START			: IN STD_LOGIC;
-			INSTRUCTION	: OUT STD_LOGIC_VECTOR(21 downto 0)
-);
-END COMPONENT;
+  component LATE_STATUS_CU
+    port(CLOCK       : in  std_logic;
+         RESET       : in  std_logic;
+         START       : in  std_logic;
+         INSTRUCTION : out std_logic_vector(21 downto 0)
+         );
+  end component;
 
-COMPONENT DATAPATH
-PORT(		CLOCK		 	: IN STD_LOGIC;
-			DATA_IN0		: IN SIGNED(15 downto 0);
-			DATA_IN1		: IN SIGNED(15 downto 0);
-			RESET			: IN STD_LOGIC;
-			CHIP_SELECT	: IN STD_LOGIC;
-			WR2			: IN STD_LOGIC;
-			WR1			: IN STD_LOGIC;
-			WR0			: IN STD_LOGIC;
-			BUS0_SEL		: IN STD_LOGIC;
-			BUS1_SEL		: IN STD_LOGIC_VECTOR(1 downto 0);
-			LD1			: IN STD_LOGIC;
-			LD2			: IN STD_LOGIC;
-			LD3			: IN STD_LOGIC;
-			LD4			: IN STD_LOGIC;
-			MUX1_SEL		: IN STD_LOGIC_VECTOR(1 downto 0);
-			MUX2_SEL		: IN STD_LOGIC;
-			MUX3_SEL		: IN STD_LOGIC;
-			MUX4_SEL		: IN STD_LOGIC;
-			MUX5_SEL		: IN STD_LOGIC;
-			MUX6_SEL		: IN STD_LOGIC;
-			C0_0			: IN STD_LOGIC;
-			C0_1			: IN STD_LOGIC;
-			DATA_OUT0 	: OUT SIGNED(15 downto 0);
-			DATA_OUT1 	: OUT SIGNED(15 downto 0)
-);
-END COMPONENT;
+  component DATAPATH
+    port(CLOCK       : in  std_logic;
+         DATA_IN0    : in  signed(15 downto 0);
+         DATA_IN1    : in  signed(15 downto 0);
+         RESET       : in  std_logic;
+         CHIP_SELECT : in  std_logic;
+         WR2         : in  std_logic;
+         WR1         : in  std_logic;
+         WR0         : in  std_logic;
+         BUS0_SEL    : in  std_logic;
+         BUS1_SEL    : in  std_logic_vector(1 downto 0);
+         LD1         : in  std_logic;
+         LD2         : in  std_logic;
+         LD3         : in  std_logic;
+         LD4         : in  std_logic;
+         MUX1_SEL    : in  std_logic_vector(1 downto 0);
+         MUX2_SEL    : in  std_logic;
+         MUX3_SEL    : in  std_logic;
+         MUX4_SEL    : in  std_logic;
+         MUX5_SEL    : in  std_logic;
+         MUX6_SEL    : in  std_logic;
+         C0_0        : in  std_logic;
+         C0_1        : in  std_logic;
+         DATA_OUT0   : out signed(15 downto 0);
+         DATA_OUT1   : out signed(15 downto 0)
+         );
+  end component;
 
-SIGNAL INSTRUCTION : STD_LOGIC_VECTOR(21 downto 0);
-SIGNAL BUS1_SEL_BUFFER, MUX1_SEL_BUFFER : STD_LOGIC_VECTOR(1 downto 0);
+  signal INSTRUCTION                      : std_logic_vector(21 downto 0);
+  signal BUS1_SEL_BUFFER, MUX1_SEL_BUFFER : std_logic_vector(1 downto 0);
 
-BEGIN
+begin
 
-LS_CU: LATE_STATUS_CU PORT MAP(CLOCK, RESET, START, INSTRUCTION);
+  LS_CU : LATE_STATUS_CU port map(CLOCK, RESET, START, INSTRUCTION);
 
 -- Concatenazioni fatte su buffer anziche' in fase di port map per non avere problemi con il compilatore di Modelsim
-BUS1_SEL_BUFFER <= INSTRUCTION(15)&INSTRUCTION(14);
-MUX1_SEL_BUFFER <= INSTRUCTION(9)&INSTRUCTION(8);
+  BUS1_SEL_BUFFER <= INSTRUCTION(15)&INSTRUCTION(14);
+  MUX1_SEL_BUFFER <= INSTRUCTION(9)&INSTRUCTION(8);
 
-DP: DATAPATH PORT MAP(CLOCK, DATA_IN0, DATA_IN1, INSTRUCTION(21), INSTRUCTION(20), INSTRUCTION(19), INSTRUCTION(18), INSTRUCTION(17), INSTRUCTION(16), BUS1_SEL_BUFFER, INSTRUCTION(13), INSTRUCTION(12), INSTRUCTION(11), INSTRUCTION(10), MUX1_SEL_BUFFER, INSTRUCTION(7), INSTRUCTION(6), INSTRUCTION(5), INSTRUCTION(4), INSTRUCTION(3), INSTRUCTION(2), INSTRUCTION(1), DATA_OUT0, DATA_OUT1);
+  DP : DATAPATH port map(CLOCK, DATA_IN0, DATA_IN1, INSTRUCTION(21), INSTRUCTION(20), INSTRUCTION(19), INSTRUCTION(18), INSTRUCTION(17), INSTRUCTION(16), BUS1_SEL_BUFFER, INSTRUCTION(13), INSTRUCTION(12), INSTRUCTION(11), INSTRUCTION(10), MUX1_SEL_BUFFER, INSTRUCTION(7), INSTRUCTION(6), INSTRUCTION(5), INSTRUCTION(4), INSTRUCTION(3), INSTRUCTION(2), INSTRUCTION(1), DATA_OUT0, DATA_OUT1);
 
-DONE <= INSTRUCTION(0);
+  DONE <= INSTRUCTION(0);
 
-END behavioural;
+end behavioural;

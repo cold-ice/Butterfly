@@ -1,35 +1,35 @@
 library IEEE;
-USE ieee.std_logic_1164.all;
-USE ieee.numeric_std.all;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
-ENTITY LATE_STATUS_PLA IS
-PORT(		CC				: IN STD_LOGIC;
-			LSB_IN		: IN STD_LOGIC;
-			STATUS		: IN STD_LOGIC;
-			JUMP_VALID	: OUT STD_LOGIC;
-			LSB_OUT		: OUT STD_LOGIC:='0'
-);
-END ENTITY;
+entity LATE_STATUS_PLA is
+  port(CC         : in  std_logic;
+       LSB_IN     : in  std_logic;
+       STATUS     : in  std_logic;
+       JUMP_VALID : out std_logic;
+       LSB_OUT    : out std_logic := '0'
+       );
+end entity;
 
-ARCHITECTURE behavioural OF LATE_STATUS_PLA IS
+architecture behavioural of LATE_STATUS_PLA is
 
-SIGNAL CC1, LSB_OUT_BUFFER : STD_LOGIC:='0';
+  signal CC1, LSB_OUT_BUFFER : std_logic := '0';
 
-BEGIN
+begin
 
 -- Componente descritto in stile comportamentale per semplificarne la lettura.
 
-PROCESS(STATUS, CC, LSB_IN)
-BEGIN
-IF(CC='1' AND STATUS ='1') THEN
-	LSB_OUT_BUFFER <= NOT LSB_IN;
-	JUMP_VALID<='1';
-ELSE
-	LSB_OUT_BUFFER <= LSB_IN;
-	JUMP_VALID<='0';
-END IF;
-END PROCESS;
+  process(STATUS, CC, LSB_IN)
+  begin
+    if(CC = '1' and STATUS = '1') then
+      LSB_OUT_BUFFER <= not LSB_IN;
+      JUMP_VALID     <= '1';
+    else
+      LSB_OUT_BUFFER <= LSB_IN;
+      JUMP_VALID     <= '0';
+    end if;
+  end process;
 
-LSB_OUT <= LSB_OUT_BUFFER;
-									
-END behavioural;
+  LSB_OUT <= LSB_OUT_BUFFER;
+
+end behavioural;
